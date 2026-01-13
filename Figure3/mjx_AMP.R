@@ -2,6 +2,52 @@
 setwd('/data/mengjx/tmp_proj/05.20250905_apex_EP_from_BGC/')
 pacman::p_load(tidyverse, ggpubr)
 
+#### AMP MIC ####
+data <- read.xlsx('AMPs_20251112.xlsx', check.names = F)
+
+left_join(count(data, family) %>% arrange(n),
+          select(data, genomospecies, family) %>% distinct() %>% count(family) %>% arrange(n),
+          by = 'family') %>% 
+  mutate(perc = n.y / n.x) %>% 
+  arrange(perc)
+
+left_join(count(data, genus) %>% arrange(n),
+          select(data, genomospecies, genus) %>% distinct() %>% count(genus) %>% arrange(n),
+          by = 'genus') %>% 
+  mutate(perc = n.y / n.x) %>% 
+  arrange(perc)
+
+select(data, genomospecies, family) %>% distinct() %>% count(family) %>% arrange(n)
+count(data, genus) %>% arrange(n)
+
+count(data, genomospecies) %>% arrange(n) %>% tail(n = 20)
+count(data) %>% arrange(n) %>% tail(n = 20)
+
+# select(data, 3:14) %>% gather('x', 'value') %>% aggregate(value ~ x, ., mean)
+
+select(data, 3:14) %>% 
+  gather('x', 'value') %>% 
+  mutate(x = factor(x),
+         x = relevel(x, 'Mean.MIC')) %>% 
+  gghistogram('value', fill = 'x', xlab = 'MIC value', legend = 'none', add = 'mean') +
+  facet_wrap(~ x, scale = 'free', nrow = 2) +
+  theme(strip.background = element_blank(),
+        strip.text = element_text(face = 'italic'),
+        axis.ticks.length = unit(1.5, 'mm'))
+# ggsave('AMP.MIC.histogram.pdf', width = 18, height = 6)
+
+count(data, `BiG-SCAPE_class`) %>% 
+  rename(name = 1) %>% 
+  plot_pie(top_n = 14, color = '#000000', hemi = T, start = 90,
+           fill = colorRampPalette(pald('Spectral')[2:12])(9))
+ggsave('BIGclass_counts.hemi_pie.pdf', width = 4, height = 4)
+
+count(data, `BiG-SCAPE_class`) %>% 
+  rename(name = 1) %>% 
+  plot_pie(top_n = 14, color = '#ffffff', start = 15,
+           fill = c('#82ccdc','#f0ad80','#b4b3d8','#c2b75f','#87CCBA','#F9C851','#ACDEF3','#F9C6B3'))
+ggsave('BIGclass_counts.pie.pdf', width = 4, height = 4)
+
 #### AA composition ####
 data <- rbind(
   read.delim('final_AMPs.AA.pct.tsv') %>% add_column(class = 'EPs'),
