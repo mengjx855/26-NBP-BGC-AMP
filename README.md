@@ -24,6 +24,7 @@
 - PhyloPhlAn (v1.0)
 - iTOL (v6.3.2)
 - Minimap2 (v2.26-r1175)
+- APEX (v1.1)
 - CoverM (v0.7.0)
 - AntiSMASH (v6.1.1)
 - BiG-SCAPE (v1.1.5)
@@ -38,4 +39,4 @@
 - numpy package (v1.26.2)
 - biopython package (v1.83)
 - scipy package (v1.11.4)
-
+- modlamp package (v4.3.2)
